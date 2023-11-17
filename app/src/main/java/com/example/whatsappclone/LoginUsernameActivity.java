@@ -45,6 +45,7 @@ public class LoginUsernameActivity extends AppCompatActivity {
     }
     void setUsername(){
 
+        Log.d("TAG", "setUsername: "+111);
         String username = usernameInput.getText().toString();
         if(username.isEmpty() || username.length()<3){
             usernameInput.setError("Username length should be at least 3 chars");

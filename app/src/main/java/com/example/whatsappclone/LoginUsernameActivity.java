@@ -50,7 +50,6 @@ public class LoginUsernameActivity extends AppCompatActivity {
             usernameInput.setError("Username length should be at least 3 chars");
             return;
         }
-        Log.d("TAG", "setUsername: " +"tt" );
         setInProgress(true);
         if(userModel != null){
             userModel.setUsername(username);
@@ -58,14 +57,11 @@ public class LoginUsernameActivity extends AppCompatActivity {
         else {
             userModel = new UserModel(phoneNumber,username,Timestamp.now(),FirebaseUtil.currentUserId());
         }
-        Log.d("BRISTI", "setUsername: " +"tt1" );
         FirebaseUtil.currentUserDetails().set(userModel).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Log.d("BRISTI", "setUsername: " +"tt2" );
                 setInProgress(false);
-                if(task.isSuccessful()){
-                    Log.d("BRISTI", "setUsername: " +"tt3" );
+                if(task.isComplete()){
                     Intent intent = new Intent(LoginUsernameActivity.this,MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

@@ -33,20 +33,21 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
     protected void onBindViewHolder(@NonNull UserModelViewHolder holder, int position, @NonNull UserModel model) {
         holder.usernameText.setText(model.getUsername());
         holder.phoneText.setText(model.getPhone());
-       // if(model.getUserId().equals(FirebaseUtil.currentUserId())){
-        //    holder.usernameText.setText(model.getUsername()+" (Me)");
-        }
+          if(model.getUserId().equals(FirebaseUtil.currentUserId())){
+           holder.usernameText.setText(model.getUsername()+" (Me)");
+    }
 
 
 
-     /*   holder.itemView.setOnClickListener(v -> {
-            //navigate to chat activity
+
+     holder.itemView.setOnClickListener(v -> {
+          //  navigate to chat activity
             Intent intent = new Intent(context, ChatActivity.class);
             AndroidUtil.passUserModelAsIntent(intent,model);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         });
-    }*/
+    }
 
     @NonNull
     @Override

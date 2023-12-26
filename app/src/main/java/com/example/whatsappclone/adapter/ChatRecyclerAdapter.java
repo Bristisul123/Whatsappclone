@@ -20,48 +20,33 @@ import com.example.whatsappclone.utils.FirebaseUtil;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserModel, SearchUserRecyclerAdapter.UserModelViewHolder> {
-
+public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<UserModel, ChatRecyclerAdapter.ChatModelViewHolder> {
     Context context;
 
-    public SearchUserRecyclerAdapter(@NonNull FirestoreRecyclerOptions<UserModel> options,Context context) {
+    public ChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<UserModel> options,Context context) {
         super(options);
         this.context = context;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull UserModelViewHolder holder, int position, @NonNull UserModel model) {
-        holder.usernameText.setText(model.getUsername());
-        holder.phoneText.setText(model.getPhone());
-         if(model.getUserId().equals(FirebaseUtil.currentUserId())){
-           holder.usernameText.setText(model.getUsername()+" (Me)");
-    }
+    protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull UserModel model) {
 
 
-
-
-     holder.itemView.setOnClickListener(v -> {
-          //  navigate to chat activity
-            Intent intent = new Intent(context, ChatActivity.class);
-            AndroidUtil.passUserModelAsIntent(intent,model);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-        });
     }
 
     @NonNull
     @Override
-    public UserModelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ChatModelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.search_user_recycler_row,parent,false);
-        return new UserModelViewHolder(view);
+        return new ChatModelViewHolder(view);
     }
 
-    class UserModelViewHolder extends RecyclerView.ViewHolder{
+    class ChatModelViewHolder extends RecyclerView.ViewHolder{
         TextView usernameText;
         TextView phoneText;
         ImageView profilePic;
 
-        public UserModelViewHolder(@NonNull View itemView) {
+        public ChatModelViewHolder(@NonNull View itemView) {
             super(itemView);
             usernameText = itemView.findViewById(R.id.user_name_text);
             phoneText = itemView.findViewById(R.id.phone_text);

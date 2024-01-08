@@ -35,11 +35,24 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
         FirebaseUtil.getOtherUserFromChatroom(model.getUserIds())
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                       boolean lastMessageSentByMe = model.getLastMessageSenderId().equals(FirebaseUtil.currentUserId());
 
                         UserModel otherUserModel = task.getResult().toObject(UserModel.class);
                         holder.usernameText.setText(otherUserModel.getUsername());
-                        holder.lastMessageText.setText(model.getLastMessage());
+                        if(lastMessageSentByMe)
+                            holder.lastMessageText.setText("You : "+model.getLastMessage());
+                        else
+                            holder.lastMessageText.setText(model.getLastMessage());
                         holder.lastMessageTime.setText(FirebaseUtil.timestampToString(model.getLastMessageTimestamp()));
+
+
+                        holder.itemView.setOnClickListener(v -> {
+                            //  navigate to chat activity
+                            Intent intent = new Intent(context, ChatActivity.class);
+                            AndroidUtil.passUserModelAsIntent(intent,otherUserModel);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        });
 
                     }
                 });

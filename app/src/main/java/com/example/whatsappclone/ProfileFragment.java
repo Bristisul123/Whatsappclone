@@ -1,9 +1,15 @@
 package com.example.whatsappclone;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -30,11 +36,30 @@ public class ProfileFragment extends Fragment {
   Button updateProfileBtn;
   TextView logoutBtn;
   UserModel currentUserModel;
+  ActivityResultLauncher<Intent>  imagePickLauncher;
+  Uri selectedImageUri;
+
   public ProfileFragment(){
 
   }
 
-    @Override
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    imagePickLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                 if(result.getResultCode() == Activity.RESULT_OK){
+                   Intent data = result.getData();
+                   if(data != null && data.getData()!=null){
+                       selectedImageUri = data.getData();
+                   }
+                 }
+            }
+
+            );
+  }
+
+  @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -56,6 +81,10 @@ public class ProfileFragment extends Fragment {
          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
          startActivity(intent);
        }));
+       profilePic.setOnClickListener((v)->{
+
+
+       });
         return view;
     }
     void updateBtnClick(){

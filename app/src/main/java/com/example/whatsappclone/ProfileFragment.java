@@ -23,9 +23,13 @@ import android.widget.TextView;
 
 import com.example.whatsappclone.model.UserModel;
 import com.example.whatsappclone.utils.FirebaseUtil;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 
 public class ProfileFragment extends Fragment {
@@ -82,7 +86,14 @@ public class ProfileFragment extends Fragment {
          startActivity(intent);
        }));
        profilePic.setOnClickListener((v)->{
-
+           ImagePicker.with(this).cropSquare().compress(512).maxResultSize(512,512)
+                   .createIntent(new Function1<Intent, Unit>() {
+                       @Override
+                       public Unit invoke(Intent intent) {
+                           imagePickLauncher.launch(intent);
+                           return null;
+                       }
+                   });
 
        });
         return view;

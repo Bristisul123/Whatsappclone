@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.whatsappclone.model.UserModel;
+import com.example.whatsappclone.utils.AndroidUtil;
 import com.example.whatsappclone.utils.FirebaseUtil;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -56,6 +57,7 @@ public class ProfileFragment extends Fragment {
                    Intent data = result.getData();
                    if(data != null && data.getData()!=null){
                        selectedImageUri = data.getData();
+                       AndroidUtil.setProfilePic(getContext(),selectedImageUri,profilePic);
                    }
                  }
             }
@@ -78,13 +80,25 @@ public class ProfileFragment extends Fragment {
 
        updateProfileBtn.setOnClickListener((v->{
             updateBtnClick();
+
        }));
-       logoutBtn.setOnClickListener((v->{
+       logoutBtn.setOnClickListener((v)->{
            FirebaseUtil.logout();
          Intent intent = new Intent(getContext(),SplashActivity.class);
          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
          startActivity(intent);
-       }));
+       });
+
+       profilePic.setOnClickListener((v)->{
+           ImagePicker.with(this).cropSquare().compress(512).maxResultSize(512,512)
+                   .createIntent(new Function1<Intent, Unit>() {
+                       @Override
+                       public Unit invoke(Intent intent) {
+                           imagePickLauncher.launch(intent);
+                           return null;
+                       }
+                   });
+       });
        profilePic.setOnClickListener((v)->{
            ImagePicker.with(this).cropSquare().compress(512).maxResultSize(512,512)
                    .createIntent(new Function1<Intent, Unit>() {
@@ -105,14 +119,43 @@ public class ProfileFragment extends Fragment {
         return;
       }
       currentUserModel.setUsername(newUsername);
+      setInProgress(true);
+
+      if(selectedImageUri !=null) {
+          FirebaseUtil.getCurrentProfilePicStorageRef().putFile(selectedImageUri)
+                  .addOnCompleteListener(task -> {
+                      updateToFirestore();
+                  });
+
+      }
+      else {
+          updateToFirestore();
+      }
 
     }
 
     void updateToFirestore(){
+        FirebaseUtil.currentUserDetails().set(currentUserModel)
+                .addOnCompleteListener(task -> {
+                    setInProgress(false);
+                    if(task.isSuccessful()){
+                        AndroidUtil.showToast(getContext(),"Updated successfully");
+                    }else{
+                        AndroidUtil.showToast(getContext(),"Updated failed");
+                    }
+                });
 
     }
     void getUserData(){
     setInProgress(true);
+    FirebaseUtil.getCurrentProfilePicStorageRef().getDownloadUrl()
+                    .addOnCompleteListener(task -> {
+                       if(task.isSuccessful()){
+                           Uri uri = task.getResult();
+                           AndroidUtil.setProfilePic(getContext(),uri,profilePic);
+                       }
+                    });
+
       FirebaseUtil.currentUserDetails().get().addOnCompleteListener(task -> {
            setInProgress(false);
         currentUserModel = task.getResult().toObject(UserModel.class);
